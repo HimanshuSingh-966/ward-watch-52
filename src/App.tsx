@@ -9,6 +9,8 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Patients from "./pages/Patients";
 import Medications from "./pages/Medications";
+import Investigations from "./pages/Investigations";
+import Procedures from "./pages/Procedures";
 import VitalSigns from "./pages/VitalSigns";
 import Schedules from "./pages/Schedules";
 import Logs from "./pages/Logs";
@@ -56,6 +58,8 @@ const App = () => (
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/patients" element={<ProtectedRoute><Patients /></ProtectedRoute>} />
             <Route path="/medications" element={<ProtectedRoute><Medications /></ProtectedRoute>} />
+            <Route path="/investigations" element={<ProtectedRoute><Investigations /></ProtectedRoute>} />
+            <Route path="/procedures" element={<ProtectedRoute><Procedures /></ProtectedRoute>} />
             <Route path="/vital-signs" element={<ProtectedRoute><VitalSigns /></ProtectedRoute>} />
             <Route path="/schedules" element={<ProtectedRoute><Schedules /></ProtectedRoute>} />
             <Route path="/logs" element={<ProtectedRoute><Logs /></ProtectedRoute>} />

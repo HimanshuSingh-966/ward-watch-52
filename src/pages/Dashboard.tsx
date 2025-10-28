@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabase';
-import { Activity, LogOut, Settings, Users, Pill, ClipboardList, HeartPulse, Calendar } from 'lucide-react';
+import { Activity, LogOut, Settings, Users, Pill, ClipboardList, HeartPulse, Calendar, FlaskConical, Stethoscope } from 'lucide-react';
 import { TimelineBar } from '@/components/dashboard/TimelineBar';
 import { PatientTaskCard } from '@/components/dashboard/PatientTaskCard';
 import { useToast } from '@/hooks/use-toast';
@@ -127,6 +127,8 @@ const Dashboard = () => {
   const quickActions = [
     { title: 'Patients', icon: Users, path: '/patients', color: 'bg-primary' },
     { title: 'Medications', icon: Pill, path: '/medications', color: 'bg-success' },
+    { title: 'Investigations', icon: FlaskConical, path: '/investigations', color: 'bg-chart-3' },
+    { title: 'Procedures', icon: Stethoscope, path: '/procedures', color: 'bg-chart-1' },
     { title: 'Vital Signs', icon: HeartPulse, path: '/vital-signs', color: 'bg-warning' },
     { title: 'Schedules', icon: Calendar, path: '/schedules', color: 'bg-chart-2' },
     { title: 'All Logs', icon: ClipboardList, path: '/logs', color: 'bg-chart-4' },
