@@ -5,10 +5,10 @@ import { Activity, ArrowLeft, LogOut } from 'lucide-react';
 
 type LayoutProps = {
   children: React.ReactNode;
-  title: string;
+  title?: string;
 };
 
-export const Layout = ({ children, title }: LayoutProps) => {
+const Layout = ({ children, title }: LayoutProps) => {
   const { user, userRole, signOut } = useAuth();
   const navigate = useNavigate();
 
@@ -29,7 +29,7 @@ export const Layout = ({ children, title }: LayoutProps) => {
               </Button>
               <div className="flex items-center gap-2">
                 <Activity className="h-5 w-5 text-primary" />
-                <h1 className="text-lg font-bold">{title}</h1>
+                <h1 className="text-lg font-bold">Nurse Logging System</h1>
               </div>
             </div>
             <div className="flex items-center gap-4">
@@ -51,3 +51,5 @@ export const Layout = ({ children, title }: LayoutProps) => {
     </div>
   );
 };
+
+export default Layout;

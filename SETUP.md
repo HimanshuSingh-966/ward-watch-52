@@ -16,14 +16,20 @@
    - **Project URL** (looks like: `https://xxxxx.supabase.co`)
    - **anon/public key** (starts with `eyJhbG...`)
 
-### 2. Update the Supabase Client
+### 2. Setup Environment Variables
 
-Open `src/lib/supabase.ts` and replace the placeholder values:
+1. Create a `.env` file in the root directory (same level as package.json)
+2. Add your Supabase credentials:
 
-```typescript
-const supabaseUrl = 'YOUR_SUPABASE_URL'; // Replace with your Project URL
-const supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY'; // Replace with your anon key
+```env
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
+
+**Important:** 
+- Never commit the `.env` file to version control
+- An `.env.example` file is provided as a template
+- Restart your development server after creating/updating the `.env` file
 
 ### 3. Set Up Row Level Security (RLS)
 
