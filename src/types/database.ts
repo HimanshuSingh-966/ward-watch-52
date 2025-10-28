@@ -26,6 +26,10 @@ export type Patient = {
   bed_number: string;
   contact_number: string;
   emergency_contact: string;
+  ward?: string;
+  status?: string;
+  diagnosis?: string;
+  ipd_number?: string;
   created_at: string;
   updated_at: string;
 };
@@ -69,6 +73,47 @@ export type MedicationSchedule = {
   start_date: string;
   end_date: string | null;
   is_active: boolean;
+  status?: string;
+  priority?: string;
+  task_type?: string;
+  notes?: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type Task = {
+  task_id: string;
+  patient_id: string;
+  nurse_id?: string;
+  task_type: string;
+  medication_id?: string;
+  investigation_id?: string;
+  procedure_id?: string;
+  route_id?: string;
+  scheduled_time: string;
+  status: string;
+  priority: string;
+  frequency?: string;
+  notes?: string;
+  completed_at?: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type Investigation = {
+  investigation_id: string;
+  investigation_name: string;
+  description: string;
+  normal_range?: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type Procedure = {
+  procedure_id: string;
+  procedure_name: string;
+  description: string;
+  duration?: string;
   created_at: string;
   updated_at: string;
 };

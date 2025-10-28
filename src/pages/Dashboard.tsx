@@ -126,6 +126,7 @@ const Dashboard = () => {
 
   const quickActions = [
     { title: 'Patients', icon: Users, path: '/patients', color: 'bg-primary' },
+    { title: 'All Tasks', icon: ClipboardList, path: '/all-tasks', color: 'bg-chart-5' },
     { title: 'Medications', icon: Pill, path: '/medications', color: 'bg-success' },
     { title: 'Investigations', icon: FlaskConical, path: '/investigations', color: 'bg-chart-3' },
     { title: 'Procedures', icon: Stethoscope, path: '/procedures', color: 'bg-chart-1' },

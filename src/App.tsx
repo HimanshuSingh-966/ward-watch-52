@@ -13,6 +13,7 @@ import Investigations from "./pages/Investigations";
 import Procedures from "./pages/Procedures";
 import VitalSigns from "./pages/VitalSigns";
 import Schedules from "./pages/Schedules";
+import AllTasks from "./pages/AllTasks";
 import Logs from "./pages/Logs";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
@@ -62,6 +63,7 @@ const App = () => (
             <Route path="/procedures" element={<ProtectedRoute><Procedures /></ProtectedRoute>} />
             <Route path="/vital-signs" element={<ProtectedRoute><VitalSigns /></ProtectedRoute>} />
             <Route path="/schedules" element={<ProtectedRoute><Schedules /></ProtectedRoute>} />
+            <Route path="/all-tasks" element={<ProtectedRoute><AllTasks /></ProtectedRoute>} />
             <Route path="/logs" element={<ProtectedRoute><Logs /></ProtectedRoute>} />
             <Route path="/admin" element={<AdminProtectedRoute><Admin /></AdminProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
