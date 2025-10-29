@@ -183,8 +183,8 @@ const Dashboard = () => {
               className="h-auto flex-col gap-2 py-4 hover:shadow-md transition-all"
               onClick={() => navigate(action.path)}
             >
-              <div className={`h-10 w-10 rounded-lg ${action.color} flex items-center justify-center`}>
-                <action.icon className="h-5 w-5 text-white" />
+              <div className={`h-12 w-12 rounded-lg ${action.color} flex items-center justify-center shadow-sm`}>
+                <action.icon className="h-6 w-6 text-primary-foreground" />
               </div>
               <span className="text-xs font-medium">{action.title}</span>
             </Button>
