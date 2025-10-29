@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
 import { CheckSquare, Circle, ChevronDown, ChevronUp, Pill, Activity, Stethoscope, Syringe } from 'lucide-react';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { useAuth } from '@/contexts/AuthContext';
 
 type TaskRow = {
   task_id: string;
@@ -35,7 +37,9 @@ const AllTasks = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedTask, setExpandedTask] = useState<string | null>(null);
+  const [completingTasks, setCompletingTasks] = useState<Set<string>>(new Set());
   const { toast } = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
     fetchAllTasks();
@@ -114,6 +118,74 @@ const AllTasks = () => {
       toast({ title: 'Error', description: error.message, variant: 'destructive' });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleTaskComplete = async (taskId: string, completed: boolean) => {
+    if (completingTasks.has(taskId)) return;
+    
+    setCompletingTasks(new Set(completingTasks).add(taskId));
+    
+    try {
+      if (!user) throw new Error('Not authenticated');
+
+      // Get nurse_id from user email
+      const { data: nurse } = await supabase
+        .from('nurses')
+        .select('nurse_id')
+        .eq('email', user.email)
+        .single();
+
+      if (!nurse) throw new Error('Nurse record not found');
+
+      if (completed) {
+        const task = tasks.find(t => t.task_id === taskId);
+        if (!task) return;
+
+        // Insert into nurse_logs
+        const logData: any = {
+          task_id: taskId,
+          nurse_id: nurse.nurse_id,
+          administration_time: new Date().toISOString(),
+          remarks: 'Completed from all tasks page',
+          status: 'administered',
+        };
+
+        const { error } = await supabase.from('nurse_logs').insert([logData]);
+        if (error) throw error;
+        
+        toast({ 
+          title: 'Task Completed', 
+          description: `${task.task_type} completed successfully` 
+        });
+      } else {
+        const { data: recentLog } = await supabase
+          .from('nurse_logs')
+          .select('log_id')
+          .eq('task_id', taskId)
+          .single();
+
+        if (recentLog) {
+          await supabase.from('nurse_logs').delete().eq('log_id', recentLog.log_id);
+        }
+        
+        toast({ 
+          title: 'Task Unmarked', 
+          description: 'Task marked as incomplete' 
+        });
+      }
+
+      fetchAllTasks();
+    } catch (error: any) {
+      toast({ 
+        title: 'Error', 
+        description: error.message, 
+        variant: 'destructive' 
+      });
+    } finally {
+      const newSet = new Set(completingTasks);
+      newSet.delete(taskId);
+      setCompletingTasks(newSet);
     }
   };
 
@@ -245,6 +317,7 @@ const AllTasks = () => {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[50px]"></TableHead>
+                <TableHead className="w-[50px]"></TableHead>
                 <TableHead>STATUS</TableHead>
                 <TableHead>PRIORITY</TableHead>
                 <TableHead>PATIENT</TableHead>
@@ -258,18 +331,20 @@ const AllTasks = () => {
             </TableHeader>
             <TableBody>
               {loading ? (
-                <TableRow><TableCell colSpan={10} className="text-center">Loading...</TableCell></TableRow>
+                <TableRow><TableCell colSpan={11} className="text-center">Loading...</TableCell></TableRow>
               ) : filteredTasks.length === 0 ? (
-                <TableRow><TableCell colSpan={10} className="text-center">No tasks found</TableCell></TableRow>
+                <TableRow><TableCell colSpan={11} className="text-center">No tasks found</TableCell></TableRow>
               ) : (
                 filteredTasks.map((task) => (
                   <>
                     <TableRow 
                       key={task.task_id} 
-                      className="cursor-pointer hover:bg-muted/50"
-                      onClick={() => setExpandedTask(expandedTask === task.task_id ? null : task.task_id)}
+                      className="hover:bg-muted/50"
                     >
-                      <TableCell>
+                      <TableCell onClick={(e) => {
+                        e.stopPropagation();
+                        setExpandedTask(expandedTask === task.task_id ? null : task.task_id);
+                      }}>
                         <Button variant="ghost" size="icon" className="h-6 w-6">
                           {expandedTask === task.task_id ? (
                             <ChevronUp className="h-4 w-4" />
@@ -278,29 +353,35 @@ const AllTasks = () => {
                           )}
                         </Button>
                       </TableCell>
-                      <TableCell>{getStatusBadge(task.status)}</TableCell>
-                      <TableCell>
+                      <TableCell onClick={(e) => e.stopPropagation()}>
+                        <Checkbox 
+                          checked={task.status === 'COMPLETED'}
+                          onCheckedChange={(checked) => handleTaskComplete(task.task_id, checked as boolean)}
+                        />
+                      </TableCell>
+                      <TableCell onClick={() => setExpandedTask(expandedTask === task.task_id ? null : task.task_id)}>{getStatusBadge(task.status)}</TableCell>
+                      <TableCell onClick={() => setExpandedTask(expandedTask === task.task_id ? null : task.task_id)}>
                         <div className="flex items-center gap-1">
                           {getPriorityIndicator(task.priority)}
                           <span className="text-sm">{task.priority}</span>
                         </div>
                       </TableCell>
-                      <TableCell className="font-semibold">{task.patient_name}</TableCell>
-                      <TableCell>
+                      <TableCell onClick={() => setExpandedTask(expandedTask === task.task_id ? null : task.task_id)} className="font-semibold">{task.patient_name}</TableCell>
+                      <TableCell onClick={() => setExpandedTask(expandedTask === task.task_id ? null : task.task_id)}>
                         <div className="flex flex-col text-xs">
                           <span className="text-muted-foreground">IPD</span>
                           <span>{task.ipd_number}</span>
                         </div>
                       </TableCell>
-                      <TableCell className="font-medium">{task.bed_number}</TableCell>
-                      <TableCell>{getTaskTypeBadge(task.task_type)}</TableCell>
-                      <TableCell>{task.item_name}</TableCell>
-                      <TableCell>{task.frequency}</TableCell>
-                      <TableCell>{new Date(task.scheduled_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</TableCell>
+                      <TableCell onClick={() => setExpandedTask(expandedTask === task.task_id ? null : task.task_id)} className="font-medium">{task.bed_number}</TableCell>
+                      <TableCell onClick={() => setExpandedTask(expandedTask === task.task_id ? null : task.task_id)}>{getTaskTypeBadge(task.task_type)}</TableCell>
+                      <TableCell onClick={() => setExpandedTask(expandedTask === task.task_id ? null : task.task_id)}>{task.item_name}</TableCell>
+                      <TableCell onClick={() => setExpandedTask(expandedTask === task.task_id ? null : task.task_id)}>{task.frequency}</TableCell>
+                      <TableCell onClick={() => setExpandedTask(expandedTask === task.task_id ? null : task.task_id)}>{new Date(task.scheduled_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</TableCell>
                     </TableRow>
                     {expandedTask === task.task_id && (
                       <TableRow key={`${task.task_id}-details`}>
-                        <TableCell colSpan={10} className="p-0">
+                        <TableCell colSpan={11} className="p-0">
                           {renderTaskDetails(task)}
                         </TableCell>
                       </TableRow>

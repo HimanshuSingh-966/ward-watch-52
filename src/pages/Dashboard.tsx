@@ -22,7 +22,7 @@ const Dashboard = () => {
     // Set up real-time subscription
     const channel = supabase
       .channel('dashboard-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'medication_schedules' }, () => {
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'tasks' }, () => {
         fetchDashboardData();
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'nurse_logs' }, () => {
@@ -60,37 +60,39 @@ const Dashboard = () => {
 
       if (patientsError) throw patientsError;
 
-      // For each patient, get their schedules and check if completed today
+      // For each patient, get all their tasks for today
       const patientsWithTasksData = await Promise.all(
         (patients || []).map(async (patient) => {
-          const { data: schedules } = await supabase
-            .from('medication_schedules')
+          const { data: allTasks } = await supabase
+            .from('tasks')
             .select(`
               *,
               medications(medication_name, dosage),
+              investigations(investigation_name),
+              procedures(procedure_name),
               routes_of_administration(route_name)
             `)
             .eq('patient_id', patient.patient_id)
-            .eq('is_active', true)
-            .lte('start_date', today)
-            .or(`end_date.is.null,end_date.gte.${today}`)
+            .gte('scheduled_time', `${today}T00:00:00`)
+            .lte('scheduled_time', `${today}T23:59:59`)
             .order('scheduled_time');
 
-          // Check which tasks are completed today
-          const schedulesWithCompletion = await Promise.all(
-            (schedules || []).map(async (schedule) => {
+          // Check which tasks are completed
+          const tasksWithCompletion = await Promise.all(
+            (allTasks || []).map(async (task) => {
               const { data: log } = await supabase
                 .from('nurse_logs')
                 .select('log_id')
-                .eq('patient_id', patient.patient_id)
-                .eq('medication_id', schedule.medication_id)
-                .gte('administration_time', `${today}T00:00:00`)
-                .lte('administration_time', `${today}T23:59:59`)
+                .eq('task_id', task.task_id)
                 .single();
 
               return {
-                ...schedule,
+                ...task,
                 completed_today: !!log,
+                item_name: task.task_type === 'Medication' ? task.medications?.medication_name :
+                          task.task_type === 'Investigation' ? task.investigations?.investigation_name :
+                          task.task_type === 'Procedure' ? task.procedures?.procedure_name :
+                          'Vital Signs Checkup',
               };
             })
           );
@@ -106,7 +108,7 @@ const Dashboard = () => {
           return {
             patient,
             assignedNurse: assignedNurse?.nurse_name || 'Unassigned',
-            tasks: schedulesWithCompletion,
+            tasks: tasksWithCompletion,
           };
         })
       );

@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
-import { ChevronDown, ChevronUp, Pill, Heart, Droplet, Utensils } from 'lucide-react';
+import { ChevronDown, ChevronUp, Pill, Heart, Droplet, Utensils, FlaskConical, Stethoscope } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-type TaskType = 'medication' | 'vitals' | 'bath' | 'meal';
+type TaskType = 'medication' | 'vitals' | 'bath' | 'meal' | 'investigation' | 'procedure';
 
 interface TaskItemProps {
   type: TaskType;
+  taskType?: string;
+  itemName?: string;
   scheduledTime: string;
   details: any;
   isCompleted: boolean;
@@ -21,6 +23,8 @@ const taskIcons = {
   vitals: Heart,
   bath: Droplet,
   meal: Utensils,
+  investigation: FlaskConical,
+  procedure: Stethoscope,
 };
 
 const taskLabels = {
@@ -28,10 +32,14 @@ const taskLabels = {
   vitals: 'Vital Signs',
   bath: 'Bathing',
   meal: 'Meal',
+  investigation: 'Investigation',
+  procedure: 'Procedure',
 };
 
 export const TaskItem = ({ 
   type, 
+  taskType,
+  itemName,
   scheduledTime, 
   details, 
   isCompleted, 
@@ -40,7 +48,8 @@ export const TaskItem = ({
   onComplete 
 }: TaskItemProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const Icon = taskIcons[type];
+  const Icon = taskIcons[type] || Pill;
+  const label = taskType || taskLabels[type] || 'Task';
   
   const getStatusColor = () => {
     if (isCompleted) return 'bg-success/10 border-success/30';
@@ -68,7 +77,8 @@ export const TaskItem = ({
             <Icon className="h-5 w-5 text-primary" />
             <div className="flex-1">
               <div className="flex items-center gap-2">
-                <span className="font-medium text-base">{taskLabels[type]}</span>
+                <span className="font-medium text-base">{label}</span>
+                {itemName && <span className="text-sm text-muted-foreground">• {itemName}</span>}
                 {isCompleted && (
                   <span className="text-xs px-2 py-0.5 rounded-full bg-success/20 text-success font-medium">
                     Completed
@@ -117,6 +127,30 @@ export const TaskItem = ({
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Route:</span>
                   <span className="font-medium">{details.route_name}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Frequency:</span>
+                  <span className="font-medium">{details.frequency}</span>
+                </div>
+              </>
+            )}
+            {type === 'investigation' && details && (
+              <>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Investigation:</span>
+                  <span className="font-medium">{details.investigation_name}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Frequency:</span>
+                  <span className="font-medium">{details.frequency}</span>
+                </div>
+              </>
+            )}
+            {type === 'procedure' && details && (
+              <>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Procedure:</span>
+                  <span className="font-medium">{details.procedure_name}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Frequency:</span>

@@ -54,7 +54,7 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<ProtectedRoute><AllTasks /></ProtectedRoute>} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/patients" element={<ProtectedRoute><Patients /></ProtectedRoute>} />

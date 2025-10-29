@@ -17,10 +17,10 @@ export const PatientTaskCard = ({ patient, assignedNurse, tasks, onTaskUpdate }:
   const { toast } = useToast();
   const [completingTasks, setCompletingTasks] = useState<Set<string>>(new Set());
 
-  const handleTaskComplete = async (scheduleId: string, completed: boolean) => {
-    if (completingTasks.has(scheduleId)) return;
+  const handleTaskComplete = async (taskId: string, completed: boolean) => {
+    if (completingTasks.has(taskId)) return;
     
-    setCompletingTasks(new Set(completingTasks).add(scheduleId));
+    setCompletingTasks(new Set(completingTasks).add(taskId));
     
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -36,36 +36,40 @@ export const PatientTaskCard = ({ patient, assignedNurse, tasks, onTaskUpdate }:
       if (!nurse) throw new Error('Nurse record not found');
 
       if (completed) {
-        // Find the schedule to get medication details
-        const schedule = tasks.find(t => t.schedule_id === scheduleId);
+        // Find the task
+        const task = tasks.find(t => t.task_id === taskId);
         
         // Insert into nurse_logs
-        const { error } = await supabase.from('nurse_logs').insert([{
+        const logData: any = {
           patient_id: patient.patient_id,
           nurse_id: nurse.nurse_id,
-          medication_id: schedule.medication_id,
-          route_id: schedule.route_id,
+          task_id: task.task_id,
           administration_time: new Date().toISOString(),
-          dosage_given: schedule.medications?.dosage || '',
           remarks: 'Completed from dashboard',
           status: 'administered',
-        }]);
+        };
+
+        // Add task-specific fields
+        if (task.task_type === 'Medication') {
+          logData.medication_id = task.medication_id;
+          logData.route_id = task.route_id;
+          logData.dosage_given = task.medications?.dosage || '';
+        }
+
+        const { error } = await supabase.from('nurse_logs').insert([logData]);
 
         if (error) throw error;
         
         toast({ 
           title: 'Task Completed', 
-          description: 'Medication administered successfully' 
+          description: `${task.task_type} completed successfully` 
         });
       } else {
-        // Delete the most recent log for this schedule
+        // Delete the log for this task
         const { data: recentLog } = await supabase
           .from('nurse_logs')
           .select('log_id')
-          .eq('patient_id', patient.patient_id)
-          .eq('medication_id', tasks.find(t => t.schedule_id === scheduleId)?.medication_id)
-          .order('administration_time', { ascending: false })
-          .limit(1)
+          .eq('task_id', taskId)
           .single();
 
         if (recentLog) {
@@ -74,7 +78,7 @@ export const PatientTaskCard = ({ patient, assignedNurse, tasks, onTaskUpdate }:
         
         toast({ 
           title: 'Task Unmarked', 
-          description: 'Medication marked as incomplete' 
+          description: 'Task marked as incomplete' 
         });
       }
 
@@ -87,7 +91,7 @@ export const PatientTaskCard = ({ patient, assignedNurse, tasks, onTaskUpdate }:
       });
     } finally {
       const newSet = new Set(completingTasks);
-      newSet.delete(scheduleId);
+      newSet.delete(taskId);
       setCompletingTasks(newSet);
     }
   };
@@ -142,23 +146,45 @@ export const PatientTaskCard = ({ patient, assignedNurse, tasks, onTaskUpdate }:
         {tasks.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center py-4">No tasks scheduled</p>
         ) : (
-          tasks.map((task) => (
-            <TaskItem
-              key={task.schedule_id}
-              type="medication"
-              scheduledTime={task.scheduled_time}
-              details={{
+          tasks.map((task) => {
+            const taskType = task.task_type?.toLowerCase() || 'medication';
+            const scheduledTime = task.scheduled_time ? new Date(task.scheduled_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '-';
+            
+            let details: any = {};
+            if (task.task_type === 'Medication') {
+              details = {
                 medication_name: task.medications?.medication_name,
                 dosage: task.medications?.dosage,
                 route_name: task.routes_of_administration?.route_name,
                 frequency: task.frequency,
-              }}
-              isCompleted={isTaskCompleted(task)}
-              isDueSoon={!isTaskCompleted(task) && isTaskDueSoon(task.scheduled_time)}
-              isOverdue={!isTaskCompleted(task) && isTaskOverdue(task.scheduled_time)}
-              onComplete={(completed) => handleTaskComplete(task.schedule_id, completed)}
-            />
-          ))
+              };
+            } else if (task.task_type === 'Investigation') {
+              details = {
+                investigation_name: task.investigations?.investigation_name,
+                frequency: task.frequency,
+              };
+            } else if (task.task_type === 'Procedure') {
+              details = {
+                procedure_name: task.procedures?.procedure_name,
+                frequency: task.frequency,
+              };
+            }
+
+            return (
+              <TaskItem
+                key={task.task_id}
+                type={taskType as any}
+                taskType={task.task_type}
+                itemName={task.item_name}
+                scheduledTime={scheduledTime}
+                details={details}
+                isCompleted={isTaskCompleted(task)}
+                isDueSoon={!isTaskCompleted(task) && isTaskDueSoon(scheduledTime)}
+                isOverdue={!isTaskCompleted(task) && isTaskOverdue(scheduledTime)}
+                onComplete={(completed) => handleTaskComplete(task.task_id, completed)}
+              />
+            );
+          })
         )}
       </CardContent>
     </Card>
