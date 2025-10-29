@@ -24,116 +24,128 @@ DELETE FROM departments;
 -- STEP 2: INSERT DEPARTMENTS
 -- ============================================
 
-INSERT INTO departments (department_id, department_name) VALUES
-('11111111-1111-1111-1111-111111111111', 'Emergency'),
-('22222222-2222-2222-2222-222222222222', 'ICU'),
-('33333333-3333-3333-3333-333333333333', 'General Ward'),
-('44444444-4444-4444-4444-444444444444', 'Pediatrics'),
-('55555555-5555-5555-5555-555555555555', 'Surgery');
+INSERT INTO departments (department_name) VALUES
+('Emergency'),
+('ICU'),
+('General Ward'),
+('Pediatrics'),
+('Surgery');
 
 -- ============================================
 -- STEP 3: INSERT ROUTES OF ADMINISTRATION
 -- ============================================
 
-INSERT INTO routes_of_administration (route_id, route_name) VALUES
-('a1111111-1111-1111-1111-111111111111', 'Oral'),
-('a2222222-2222-2222-2222-222222222222', 'Intravenous (IV)'),
-('a3333333-3333-3333-3333-333333333333', 'Intramuscular (IM)'),
-('a4444444-4444-4444-4444-444444444444', 'Subcutaneous (SC)'),
-('a5555555-5555-5555-5555-555555555555', 'Topical'),
-('a6666666-6666-6666-6666-666666666666', 'Inhalation'),
-('a7777777-7777-7777-7777-777777777777', 'Sublingual');
+INSERT INTO routes_of_administration (route_name) VALUES
+('Oral'),
+('Intravenous (IV)'),
+('Intramuscular (IM)'),
+('Subcutaneous (SC)'),
+('Topical'),
+('Inhalation'),
+('Sublingual');
 
 -- ============================================
 -- STEP 4: INSERT MEDICATIONS
 -- ============================================
 
-INSERT INTO medications (medication_id, medication_name, dosage, form) VALUES
-('b1111111-1111-1111-1111-111111111111', 'Paracetamol', '500mg', 'Tablet'),
-('b2222222-2222-2222-2222-222222222222', 'Ibuprofen', '400mg', 'Tablet'),
-('b3333333-3333-3333-3333-333333333333', 'Amoxicillin', '500mg', 'Capsule'),
-('b4444444-4444-4444-4444-444444444444', 'Metformin', '850mg', 'Tablet'),
-('b5555555-5555-5555-5555-555555555555', 'Insulin', '10 units', 'Injection'),
-('b6666666-6666-6666-6666-666666666666', 'Aspirin', '75mg', 'Tablet'),
-('b7777777-7777-7777-7777-777777777777', 'Omeprazole', '20mg', 'Capsule'),
-('b8888888-8888-8888-8888-888888888888', 'Atorvastatin', '40mg', 'Tablet'),
-('b9999999-9999-9999-9999-999999999999', 'Morphine', '10mg', 'Injection'),
-('ba111111-1111-1111-1111-111111111111', 'Salbutamol', '100mcg', 'Inhaler'),
-('bb222222-2222-2222-2222-222222222222', 'Ceftriaxone', '1g', 'Injection'),
-('bc333333-3333-3333-3333-333333333333', 'Furosemide', '40mg', 'Tablet');
+INSERT INTO medications (medication_name, dosage, form) VALUES
+('Paracetamol', '500mg', 'Tablet'),
+('Ibuprofen', '400mg', 'Tablet'),
+('Amoxicillin', '500mg', 'Capsule'),
+('Metformin', '850mg', 'Tablet'),
+('Insulin', '10 units', 'Injection'),
+('Aspirin', '75mg', 'Tablet'),
+('Omeprazole', '20mg', 'Capsule'),
+('Atorvastatin', '40mg', 'Tablet'),
+('Morphine', '10mg', 'Injection'),
+('Salbutamol', '100mcg', 'Inhaler'),
+('Ceftriaxone', '1g', 'Injection'),
+('Furosemide', '40mg', 'Tablet');
 
 -- ============================================
 -- STEP 5: INSERT INVESTIGATIONS
 -- ============================================
 
-INSERT INTO investigations (investigation_id, investigation_name, description, normal_range) VALUES
-('c1111111-1111-1111-1111-111111111111', 'Complete Blood Count', 'CBC - measures different components of blood', 'WBC: 4-11 K/uL, RBC: 4.5-5.5 M/uL'),
-('c2222222-2222-2222-2222-222222222222', 'Blood Glucose', 'Fasting blood sugar test', '70-100 mg/dL'),
-('c3333333-3333-3333-3333-333333333333', 'Liver Function Test', 'Tests for liver enzymes', 'ALT: 7-56 U/L, AST: 10-40 U/L'),
-('c4444444-4444-4444-4444-444444444444', 'Kidney Function Test', 'Creatinine and BUN', 'Creatinine: 0.7-1.3 mg/dL'),
-('c5555555-5555-5555-5555-555555555555', 'Chest X-Ray', 'Radiological examination of chest', 'N/A'),
-('c6666666-6666-6666-6666-666666666666', 'ECG', 'Electrocardiogram', 'HR: 60-100 bpm'),
-('c7777777-7777-7777-7777-777777777777', 'Urinalysis', 'Urine examination', 'pH: 4.5-8.0'),
-('c8888888-8888-8888-8888-888888888888', 'HbA1c', 'Glycated hemoglobin test', '< 5.7%');
+INSERT INTO investigations (investigation_name, description, normal_range) VALUES
+('Complete Blood Count', 'CBC - measures different components of blood', 'WBC: 4-11 K/uL, RBC: 4.5-5.5 M/uL'),
+('Blood Glucose', 'Fasting blood sugar test', '70-100 mg/dL'),
+('Liver Function Test', 'Tests for liver enzymes', 'ALT: 7-56 U/L, AST: 10-40 U/L'),
+('Kidney Function Test', 'Creatinine and BUN', 'Creatinine: 0.7-1.3 mg/dL'),
+('Chest X-Ray', 'Radiological examination of chest', 'N/A'),
+('ECG', 'Electrocardiogram', 'HR: 60-100 bpm'),
+('Urinalysis', 'Urine examination', 'pH: 4.5-8.0'),
+('HbA1c', 'Glycated hemoglobin test', '< 5.7%');
 
 -- ============================================
 -- STEP 6: INSERT PROCEDURES
 -- ============================================
 
-INSERT INTO procedures (procedure_id, procedure_name, description, duration) VALUES
-('d1111111-1111-1111-1111-111111111111', 'Wound Dressing', 'Change and clean wound dressing', '15 mins'),
-('d2222222-2222-2222-2222-222222222222', 'Catheterization', 'Urinary catheter insertion', '20 mins'),
-('d3333333-3333-3333-3333-333333333333', 'IV Line Insertion', 'Insert intravenous line', '10 mins'),
-('d4444444-4444-4444-4444-444444444444', 'Blood Draw', 'Venipuncture for blood sample', '5 mins'),
-('d5555555-5555-5555-5555-555555555555', 'Nasogastric Tube', 'NG tube insertion', '15 mins'),
-('d6666666-6666-6666-6666-666666666666', 'Oxygen Therapy', 'Administer oxygen via mask/nasal', '30 mins'),
-('d7777777-7777-7777-7777-777777777777', 'Nebulization', 'Administer medication via nebulizer', '20 mins'),
-('d8888888-8888-8888-8888-888888888888', 'Physiotherapy', 'Chest physiotherapy session', '30 mins');
+INSERT INTO procedures (procedure_name, description, duration) VALUES
+('Wound Dressing', 'Change and clean wound dressing', '15 mins'),
+('Catheterization', 'Urinary catheter insertion', '20 mins'),
+('IV Line Insertion', 'Insert intravenous line', '10 mins'),
+('Blood Draw', 'Venipuncture for blood sample', '5 mins'),
+('Nasogastric Tube', 'NG tube insertion', '15 mins'),
+('Oxygen Therapy', 'Administer oxygen via mask/nasal', '30 mins'),
+('Nebulization', 'Administer medication via nebulizer', '20 mins'),
+('Physiotherapy', 'Chest physiotherapy session', '30 mins');
 
 -- ============================================
 -- STEP 7: INSERT NURSES
 -- ============================================
+-- Note: department_id will need to reference actual generated IDs from departments table
+-- For now using subqueries to get the correct department IDs
 
-INSERT INTO nurses (nurse_id, nurse_name, department_id, contact_number, email, shift) VALUES
-('e1111111-1111-1111-1111-111111111111', 'Sarah Johnson', '11111111-1111-1111-1111-111111111111', '+1-555-0101', 'sarah.j@hospital.com', 'Morning'),
-('e2222222-2222-2222-2222-222222222222', 'Michael Chen', '22222222-2222-2222-2222-222222222222', '+1-555-0102', 'michael.c@hospital.com', 'Evening'),
-('e3333333-3333-3333-3333-333333333333', 'Emily Rodriguez', '33333333-3333-3333-3333-333333333333', '+1-555-0103', 'emily.r@hospital.com', 'Morning'),
-('e4444444-4444-4444-4444-444444444444', 'James Wilson', '11111111-1111-1111-1111-111111111111', '+1-555-0104', 'james.w@hospital.com', 'Night'),
-('e5555555-5555-5555-5555-555555555555', 'Priya Patel', '44444444-4444-4444-4444-444444444444', '+1-555-0105', 'priya.p@hospital.com', 'Morning'),
-('e6666666-6666-6666-6666-666666666666', 'David Kim', '22222222-2222-2222-2222-222222222222', '+1-555-0106', 'david.k@hospital.com', 'Evening'),
-('e7777777-7777-7777-7777-777777777777', 'Lisa Anderson', '55555555-5555-5555-5555-555555555555', '+1-555-0107', 'lisa.a@hospital.com', 'Morning'),
-('e8888888-8888-8888-8888-888888888888', 'Ahmed Hassan', '33333333-3333-3333-3333-333333333333', '+1-555-0108', 'ahmed.h@hospital.com', 'Night');
+INSERT INTO nurses (nurse_name, department_id, contact_number, email, shift) 
+SELECT 'Sarah Johnson', department_id, '+1-555-0101', 'sarah.j@hospital.com', 'Morning' FROM departments WHERE department_name = 'Emergency'
+UNION ALL SELECT 'Michael Chen', department_id, '+1-555-0102', 'michael.c@hospital.com', 'Evening' FROM departments WHERE department_name = 'ICU'
+UNION ALL SELECT 'Emily Rodriguez', department_id, '+1-555-0103', 'emily.r@hospital.com', 'Morning' FROM departments WHERE department_name = 'General Ward'
+UNION ALL SELECT 'James Wilson', department_id, '+1-555-0104', 'james.w@hospital.com', 'Night' FROM departments WHERE department_name = 'Emergency'
+UNION ALL SELECT 'Priya Patel', department_id, '+1-555-0105', 'priya.p@hospital.com', 'Morning' FROM departments WHERE department_name = 'Pediatrics'
+UNION ALL SELECT 'David Kim', department_id, '+1-555-0106', 'david.k@hospital.com', 'Evening' FROM departments WHERE department_name = 'ICU'
+UNION ALL SELECT 'Lisa Anderson', department_id, '+1-555-0107', 'lisa.a@hospital.com', 'Morning' FROM departments WHERE department_name = 'Surgery'
+UNION ALL SELECT 'Ahmed Hassan', department_id, '+1-555-0108', 'ahmed.h@hospital.com', 'Night' FROM departments WHERE department_name = 'General Ward';
 
 -- ============================================
 -- STEP 8: INSERT PATIENTS
 -- ============================================
 
-INSERT INTO patients (patient_id, patient_name, age, gender, admission_date, bed_number, ward, status, diagnosis, ipd_number, contact_number, emergency_contact) VALUES
-('f1111111-1111-1111-1111-111111111111', 'John Smith', 45, 'Male', '2025-10-25', 'A-101', 'Emergency', 'Critical', 'Acute Myocardial Infarction', 'IPD2025001', '+1-555-1001', '+1-555-1002'),
-('f2222222-2222-2222-2222-222222222222', 'Maria Garcia', 62, 'Female', '2025-10-26', 'B-205', 'ICU', 'Stable', 'Pneumonia', 'IPD2025002', '+1-555-1003', '+1-555-1004'),
-('f3333333-3333-3333-3333-333333333333', 'Robert Lee', 34, 'Male', '2025-10-27', 'C-301', 'General Ward', 'Stable', 'Type 2 Diabetes', 'IPD2025003', '+1-555-1005', '+1-555-1006'),
-('f4444444-4444-4444-4444-444444444444', 'Emma Williams', 8, 'Female', '2025-10-27', 'D-102', 'Pediatrics', 'Recovering', 'Asthma Exacerbation', 'IPD2025004', '+1-555-1007', '+1-555-1008'),
-('f5555555-5555-5555-5555-555555555555', 'Thomas Brown', 71, 'Male', '2025-10-28', 'B-210', 'ICU', 'Critical', 'Septic Shock', 'IPD2025005', '+1-555-1009', '+1-555-1010'),
-('f6666666-6666-6666-6666-666666666666', 'Jennifer Davis', 29, 'Female', '2025-10-28', 'E-401', 'Surgery', 'Post-Op', 'Appendectomy', 'IPD2025006', '+1-555-1011', '+1-555-1012'),
-('f7777777-7777-7777-7777-777777777777', 'Kevin Nguyen', 55, 'Male', '2025-10-29', 'C-305', 'General Ward', 'Stable', 'Hypertension', 'IPD2025007', '+1-555-1013', '+1-555-1014'),
-('f8888888-8888-8888-8888-888888888888', 'Sophia Martinez', 6, 'Female', '2025-10-29', 'D-105', 'Pediatrics', 'Stable', 'Gastroenteritis', 'IPD2025008', '+1-555-1015', '+1-555-1016');
+INSERT INTO patients (patient_name, age, gender, admission_date, bed_number, ward, status, diagnosis, ipd_number, contact_number, emergency_contact) VALUES
+('John Smith', 45, 'Male', '2025-10-25', 'A-101', 'Emergency', 'Critical', 'Acute Myocardial Infarction', 'IPD2025001', '+1-555-1001', '+1-555-1002'),
+('Maria Garcia', 62, 'Female', '2025-10-26', 'B-205', 'ICU', 'Stable', 'Pneumonia', 'IPD2025002', '+1-555-1003', '+1-555-1004'),
+('Robert Lee', 34, 'Male', '2025-10-27', 'C-301', 'General Ward', 'Stable', 'Type 2 Diabetes', 'IPD2025003', '+1-555-1005', '+1-555-1006'),
+('Emma Williams', 8, 'Female', '2025-10-27', 'D-102', 'Pediatrics', 'Recovering', 'Asthma Exacerbation', 'IPD2025004', '+1-555-1007', '+1-555-1008'),
+('Thomas Brown', 71, 'Male', '2025-10-28', 'B-210', 'ICU', 'Critical', 'Septic Shock', 'IPD2025005', '+1-555-1009', '+1-555-1010'),
+('Jennifer Davis', 29, 'Female', '2025-10-28', 'E-401', 'Surgery', 'Post-Op', 'Appendectomy', 'IPD2025006', '+1-555-1011', '+1-555-1012'),
+('Kevin Nguyen', 55, 'Male', '2025-10-29', 'C-305', 'General Ward', 'Stable', 'Hypertension', 'IPD2025007', '+1-555-1013', '+1-555-1014'),
+('Sophia Martinez', 6, 'Female', '2025-10-29', 'D-105', 'Pediatrics', 'Stable', 'Gastroenteritis', 'IPD2025008', '+1-555-1015', '+1-555-1016');
 
 -- ============================================
 -- STEP 9: INSERT MEDICATION SCHEDULES
 -- ============================================
+-- Using subqueries to reference auto-generated IDs
 
-INSERT INTO medication_schedules (schedule_id, patient_id, medication_id, route_id, scheduled_time, frequency, start_date, end_date, is_active) VALUES
-('g1111111-1111-1111-1111-111111111111', 'f1111111-1111-1111-1111-111111111111', 'b6666666-6666-6666-6666-666666666666', 'a1111111-1111-1111-1111-111111111111', '08:00:00', 'Once Daily', '2025-10-25', '2025-11-25', true),
-('g2222222-2222-2222-2222-222222222222', 'f1111111-1111-1111-1111-111111111111', 'b9999999-9999-9999-9999-999999999999', 'a2222222-2222-2222-2222-222222222222', '12:00:00', 'Every 6 hours', '2025-10-25', NULL, true),
-('g3333333-3333-3333-3333-333333333333', 'f2222222-2222-2222-2222-222222222222', 'b3333333-3333-3333-3333-333333333333', 'a1111111-1111-1111-1111-111111111111', '09:00:00', 'Three times daily', '2025-10-26', '2025-11-02', true),
-('g4444444-4444-4444-4444-444444444444', 'f2222222-2222-2222-2222-222222222222', 'bb222222-2222-2222-2222-222222222222', 'a2222222-2222-2222-2222-222222222222', '14:00:00', 'Twice daily', '2025-10-26', '2025-11-01', true),
-('g5555555-5555-5555-5555-555555555555', 'f3333333-3333-3333-3333-333333333333', 'b4444444-4444-4444-4444-444444444444', 'a1111111-1111-1111-1111-111111111111', '07:00:00', 'Twice daily', '2025-10-27', NULL, true),
-('g6666666-6666-6666-6666-666666666666', 'f3333333-3333-3333-3333-333333333333', 'b5555555-5555-5555-5555-555555555555', 'a4444444-4444-4444-4444-444444444444', '07:30:00', 'Once Daily', '2025-10-27', NULL, true),
-('g7777777-7777-7777-7777-777777777777', 'f4444444-4444-4444-4444-444444444444', 'ba111111-1111-1111-1111-111111111111', 'a6666666-6666-6666-6666-666666666666', '08:00:00', 'Four times daily', '2025-10-27', '2025-11-03', true),
-('g8888888-8888-8888-8888-888888888888', 'f5555555-5555-5555-5555-555555555555', 'bb222222-2222-2222-2222-222222222222', 'a2222222-2222-2222-2222-222222222222', '06:00:00', 'Every 8 hours', '2025-10-28', NULL, true),
-('g9999999-9999-9999-9999-999999999999', 'f6666666-6666-6666-6666-666666666666', 'b1111111-1111-1111-1111-111111111111', 'a1111111-1111-1111-1111-111111111111', '08:00:00', 'Three times daily', '2025-10-28', '2025-11-04', true),
-('ga111111-1111-1111-1111-111111111111', 'f7777777-7777-7777-7777-777777777777', 'b8888888-8888-8888-8888-888888888888', 'a1111111-1111-1111-1111-111111111111', '21:00:00', 'Once Daily', '2025-10-29', NULL, true),
-('gb222222-2222-2222-2222-222222222222', 'f8888888-8888-8888-8888-888888888888', 'b7777777-7777-7777-7777-777777777777', 'a1111111-1111-1111-1111-111111111111', '08:00:00', 'Once Daily', '2025-10-29', '2025-11-05', true);
+WITH 
+  p AS (SELECT patient_id, patient_name FROM patients),
+  m AS (SELECT medication_id, medication_name FROM medications),
+  r AS (SELECT route_id, route_name FROM routes_of_administration)
+INSERT INTO medication_schedules (patient_id, medication_id, route_id, scheduled_time, frequency, start_date, end_date, is_active)
+SELECT p.patient_id, m.medication_id, r.route_id, scheduled_time, frequency, start_date, end_date, is_active FROM (VALUES
+  ('John Smith', 'Aspirin', 'Oral', '08:00:00', 'Once Daily', '2025-10-25', '2025-11-25', true),
+  ('John Smith', 'Morphine', 'Intravenous (IV)', '12:00:00', 'Every 6 hours', '2025-10-25', NULL, true),
+  ('Maria Garcia', 'Amoxicillin', 'Oral', '09:00:00', 'Three times daily', '2025-10-26', '2025-11-02', true),
+  ('Maria Garcia', 'Ceftriaxone', 'Intravenous (IV)', '14:00:00', 'Twice daily', '2025-10-26', '2025-11-01', true),
+  ('Robert Lee', 'Metformin', 'Oral', '07:00:00', 'Twice daily', '2025-10-27', NULL, true),
+  ('Robert Lee', 'Insulin', 'Subcutaneous (SC)', '07:30:00', 'Once Daily', '2025-10-27', NULL, true),
+  ('Emma Williams', 'Salbutamol', 'Inhalation', '08:00:00', 'Four times daily', '2025-10-27', '2025-11-03', true),
+  ('Thomas Brown', 'Ceftriaxone', 'Intravenous (IV)', '06:00:00', 'Every 8 hours', '2025-10-28', NULL, true),
+  ('Jennifer Davis', 'Paracetamol', 'Oral', '08:00:00', 'Three times daily', '2025-10-28', '2025-11-04', true),
+  ('Kevin Nguyen', 'Atorvastatin', 'Oral', '21:00:00', 'Once Daily', '2025-10-29', NULL, true),
+  ('Sophia Martinez', 'Omeprazole', 'Oral', '08:00:00', 'Once Daily', '2025-10-29', '2025-11-05', true)
+) AS v(patient_name, medication_name, route_name, scheduled_time, frequency, start_date, end_date, is_active)
+JOIN p ON p.patient_name = v.patient_name
+JOIN m ON m.medication_name = v.medication_name
+JOIN r ON r.route_name = v.route_name;
 
 -- ============================================
 -- STEP 10: INSERT TASKS (Central Timeline)
