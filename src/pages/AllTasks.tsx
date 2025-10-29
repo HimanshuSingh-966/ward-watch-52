@@ -4,8 +4,10 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
-import { CheckSquare, Circle } from 'lucide-react';
+import { CheckSquare, Circle, ChevronDown, ChevronUp, Pill, Activity, Stethoscope, Syringe } from 'lucide-react';
 import Layout from '@/components/Layout';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 
 type TaskRow = {
   task_id: string;
@@ -20,12 +22,19 @@ type TaskRow = {
   status: string;
   priority: string;
   notes: string;
+  medication_dosage?: string;
+  medication_form?: string;
+  investigation_description?: string;
+  investigation_range?: string;
+  procedure_description?: string;
+  procedure_duration?: string;
 };
 
 const AllTasks = () => {
   const [tasks, setTasks] = useState<TaskRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [expandedTask, setExpandedTask] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -36,41 +45,69 @@ const AllTasks = () => {
     try {
       const today = new Date().toISOString().split('T')[0];
 
-      // Fetch medication tasks
-      const { data: medTasks, error: medError } = await supabase
-        .from('medication_schedules')
+      // Fetch all tasks from central tasks table
+      const { data: allTasks, error: tasksError } = await supabase
+        .from('tasks')
         .select(`
-          schedule_id,
+          task_id,
+          task_type,
           scheduled_time,
           frequency,
           status,
           priority,
-          task_type,
           notes,
           patients(patient_name, ipd_number, bed_number),
-          medications(medication_name),
+          medications(medication_name, dosage, form),
+          investigations(investigation_name, description, normal_range),
+          procedures(procedure_name, description, duration),
           routes_of_administration(route_name)
         `)
-        .eq('is_active', true)
-        .gte('start_date', today)
+        .gte('scheduled_time', today)
         .order('scheduled_time');
 
-      if (medError) throw medError;
+      if (tasksError) throw tasksError;
 
-      const formattedTasks: TaskRow[] = (medTasks || []).map((task: any) => ({
-        task_id: task.schedule_id,
-        patient_name: task.patients?.patient_name || 'Unknown',
-        ipd_number: task.patients?.ipd_number || '-',
-        bed_number: task.patients?.bed_number || '-',
-        task_type: task.task_type || 'Medication',
-        item_name: task.medications?.medication_name || '-',
-        route_name: task.routes_of_administration?.route_name || '-',
-        frequency: task.frequency || '-',
-        scheduled_time: task.scheduled_time,
-        status: task.status || 'PENDING',
-        priority: task.priority || 'Medium',
-        notes: task.notes || '',
-      }));
+      const formattedTasks: TaskRow[] = (allTasks || []).map((task: any) => {
+        let itemName = '-';
+        let details: any = {};
+
+        switch (task.task_type) {
+          case 'Medication':
+            itemName = task.medications?.medication_name || '-';
+            details.medication_dosage = task.medications?.dosage;
+            details.medication_form = task.medications?.form;
+            break;
+          case 'Investigation':
+            itemName = task.investigations?.investigation_name || '-';
+            details.investigation_description = task.investigations?.description;
+            details.investigation_range = task.investigations?.normal_range;
+            break;
+          case 'Procedure':
+            itemName = task.procedures?.procedure_name || '-';
+            details.procedure_description = task.procedures?.description;
+            details.procedure_duration = task.procedures?.duration;
+            break;
+          case 'Vital Signs':
+            itemName = 'Vital Signs Checkup';
+            break;
+        }
+
+        return {
+          task_id: task.task_id,
+          patient_name: task.patients?.patient_name || 'Unknown',
+          ipd_number: task.patients?.ipd_number || '-',
+          bed_number: task.patients?.bed_number || '-',
+          task_type: task.task_type,
+          item_name: itemName,
+          route_name: task.routes_of_administration?.route_name || '-',
+          frequency: task.frequency || '-',
+          scheduled_time: task.scheduled_time,
+          status: task.status || 'PENDING',
+          priority: task.priority || 'Medium',
+          notes: task.notes || '',
+          ...details,
+        };
+      });
 
       setTasks(formattedTasks);
     } catch (error: any) {
@@ -106,13 +143,77 @@ const AllTasks = () => {
   };
 
   const getTaskTypeBadge = (taskType: string) => {
-    const typeMap: Record<string, { className: string }> = {
-      'Medication': { className: 'bg-blue-100 text-blue-800' },
-      'Investigation': { className: 'bg-purple-100 text-purple-800' },
-      'Procedure': { className: 'bg-orange-100 text-orange-800' },
+    const typeMap: Record<string, { className: string; icon: any }> = {
+      'Medication': { className: 'bg-chart-1/20 text-chart-1 border-chart-1/30', icon: Pill },
+      'Investigation': { className: 'bg-chart-2/20 text-chart-2 border-chart-2/30', icon: Stethoscope },
+      'Procedure': { className: 'bg-chart-3/20 text-chart-3 border-chart-3/30', icon: Syringe },
+      'Vital Signs': { className: 'bg-chart-4/20 text-chart-4 border-chart-4/30', icon: Activity },
     };
     const config = typeMap[taskType] || typeMap['Medication'];
-    return <Badge variant="outline" className={config.className}>{taskType}</Badge>;
+    const Icon = config.icon;
+    return (
+      <Badge variant="outline" className={`${config.className} flex items-center gap-1`}>
+        <Icon className="h-3 w-3" />
+        {taskType}
+      </Badge>
+    );
+  };
+
+  const renderTaskDetails = (task: TaskRow) => {
+    return (
+      <Card className="mt-2 bg-muted/50">
+        <CardContent className="pt-4">
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            {task.task_type === 'Medication' && (
+              <>
+                <div>
+                  <span className="font-semibold text-muted-foreground">Dosage:</span>
+                  <p className="mt-1">{task.medication_dosage || 'N/A'}</p>
+                </div>
+                <div>
+                  <span className="font-semibold text-muted-foreground">Form:</span>
+                  <p className="mt-1">{task.medication_form || 'N/A'}</p>
+                </div>
+                <div>
+                  <span className="font-semibold text-muted-foreground">Route:</span>
+                  <p className="mt-1">{task.route_name}</p>
+                </div>
+              </>
+            )}
+            {task.task_type === 'Investigation' && (
+              <>
+                <div className="col-span-2">
+                  <span className="font-semibold text-muted-foreground">Description:</span>
+                  <p className="mt-1">{task.investigation_description || 'N/A'}</p>
+                </div>
+                <div className="col-span-2">
+                  <span className="font-semibold text-muted-foreground">Normal Range:</span>
+                  <p className="mt-1">{task.investigation_range || 'N/A'}</p>
+                </div>
+              </>
+            )}
+            {task.task_type === 'Procedure' && (
+              <>
+                <div className="col-span-2">
+                  <span className="font-semibold text-muted-foreground">Description:</span>
+                  <p className="mt-1">{task.procedure_description || 'N/A'}</p>
+                </div>
+                <div>
+                  <span className="font-semibold text-muted-foreground">Duration:</span>
+                  <p className="mt-1">{task.procedure_duration || 'N/A'}</p>
+                </div>
+              </>
+            )}
+            {task.notes && (
+              <div className="col-span-2">
+                <span className="font-semibold text-muted-foreground">Notes:</span>
+                <p className="mt-1">{task.notes}</p>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    );
   };
 
   return (
@@ -143,49 +244,68 @@ const AllTasks = () => {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-[50px]"></TableHead>
                 <TableHead>STATUS</TableHead>
                 <TableHead>PRIORITY</TableHead>
                 <TableHead>PATIENT</TableHead>
                 <TableHead>IPD NO.</TableHead>
                 <TableHead>BED</TableHead>
                 <TableHead>TASK TYPE</TableHead>
-                <TableHead>MEDICATION/PROCEDURE</TableHead>
-                <TableHead>ROUTE</TableHead>
+                <TableHead>ITEM</TableHead>
                 <TableHead>FREQUENCY</TableHead>
                 <TableHead>SCHEDULED TIME</TableHead>
-                <TableHead>NOTES</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
-                <TableRow><TableCell colSpan={11} className="text-center">Loading...</TableCell></TableRow>
+                <TableRow><TableCell colSpan={10} className="text-center">Loading...</TableCell></TableRow>
               ) : filteredTasks.length === 0 ? (
-                <TableRow><TableCell colSpan={11} className="text-center">No tasks found</TableCell></TableRow>
+                <TableRow><TableCell colSpan={10} className="text-center">No tasks found</TableCell></TableRow>
               ) : (
                 filteredTasks.map((task) => (
-                  <TableRow key={task.task_id}>
-                    <TableCell>{getStatusBadge(task.status)}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1">
-                        {getPriorityIndicator(task.priority)}
-                        <span className="text-sm">{task.priority}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-semibold">{task.patient_name}</TableCell>
-                    <TableCell>
-                      <div className="flex flex-col text-xs">
-                        <span className="text-muted-foreground">IPD</span>
-                        <span>{task.ipd_number}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-medium">{task.bed_number}</TableCell>
-                    <TableCell>{getTaskTypeBadge(task.task_type)}</TableCell>
-                    <TableCell>{task.item_name}</TableCell>
-                    <TableCell>{task.route_name}</TableCell>
-                    <TableCell>{task.frequency}</TableCell>
-                    <TableCell>{new Date(task.scheduled_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</TableCell>
-                    <TableCell className="max-w-xs truncate">{task.notes || '-'}</TableCell>
-                  </TableRow>
+                  <>
+                    <TableRow 
+                      key={task.task_id} 
+                      className="cursor-pointer hover:bg-muted/50"
+                      onClick={() => setExpandedTask(expandedTask === task.task_id ? null : task.task_id)}
+                    >
+                      <TableCell>
+                        <Button variant="ghost" size="icon" className="h-6 w-6">
+                          {expandedTask === task.task_id ? (
+                            <ChevronUp className="h-4 w-4" />
+                          ) : (
+                            <ChevronDown className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </TableCell>
+                      <TableCell>{getStatusBadge(task.status)}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-1">
+                          {getPriorityIndicator(task.priority)}
+                          <span className="text-sm">{task.priority}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-semibold">{task.patient_name}</TableCell>
+                      <TableCell>
+                        <div className="flex flex-col text-xs">
+                          <span className="text-muted-foreground">IPD</span>
+                          <span>{task.ipd_number}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-medium">{task.bed_number}</TableCell>
+                      <TableCell>{getTaskTypeBadge(task.task_type)}</TableCell>
+                      <TableCell>{task.item_name}</TableCell>
+                      <TableCell>{task.frequency}</TableCell>
+                      <TableCell>{new Date(task.scheduled_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</TableCell>
+                    </TableRow>
+                    {expandedTask === task.task_id && (
+                      <TableRow key={`${task.task_id}-details`}>
+                        <TableCell colSpan={10} className="p-0">
+                          {renderTaskDetails(task)}
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </>
                 ))
               )}
             </TableBody>
